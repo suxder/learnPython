@@ -17,3 +17,7 @@ Traceback (most recent call last):
 AttributeError: 'Student' object has no attribute 'age'#报错“Student”对象没有“age”属性
 ```
 
+## Day2（原稿已丢失）参考以下链接
+
+[https://www.liaoxuefeng.com/wiki/1016959663602400/1017497232674368]: 
+
