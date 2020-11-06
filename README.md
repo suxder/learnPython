@@ -5,11 +5,15 @@
 # learnPython
 ## Day 1
 
-### 1.面向对象的设计思想是从自然界中来的，因为在自然界中，类（Class）和实例（Instance）的概念是很自然的。Class是一种抽象概念，比如我们定义的Class——Student，是指学生这个概念，而实例（Instance）则是一个个具体的Student，比如，Bart Simpson和Lisa Simpson是两个具体的Student。
+### 1.面向对象的设计思想
 
-### 2.和静态语言不同，Python允许对实例变量绑定任何数据，也就是说，对于两个实例变量，虽然它们都是同一个类的不同实例，但拥有的变量名称都可能不同：
+面向对象的设计思想是从自然界中来的，因为在自然界中，类（Class）和实例（Instance）的概念是很自然的。Class是一种抽象概念，比如我们定义的Class——Student，是指学生这个概念，而实例（Instance）则是一个个具体的Student，比如，Bart Simpson和Lisa Simpson是两个具体的Student。
 
-```
+### 2.Python与静态语言的某些区别
+
+和静态语言不同，Python允许对实例变量绑定任何数据，也就是说，对于两个实例变量，虽然它们都是同一个类的不同实例，但拥有的变量名称都可能不同：
+
+```python 
 >>> bart = Student('Bart Simpson', 59)
 >>> lisa = Student('Lisa Simpson', 87)
 >>> bart.age = 8 #给bart这个实例绑定一个属性age，值为8，而这个属性在类中是不存在的，所以其他实例直接引用该属性会报错
@@ -37,9 +41,6 @@ AttributeError: 'Student' object has no attribute 'age'#报错“Student”对�
 
 - 使用dir()获得一个对象的所有类型和方法。    
 
-    
-
-  
 
 总结：通过内置的一系列函数
 
@@ -59,7 +60,7 @@ getattr()、setattr()、hasattr()
 
 ### 3.    关于对实例属性的操作
 
-```
+```python 
 class MyObject(object):
     def __init__(self):
         self.x = 9     #默认为9
@@ -88,7 +89,7 @@ obj.set_x(2)
 obj.x   #结果变化为2
 ```
 
-```
+```python
 #类对象的内存地址每次变化
 MyObject()  #第一次运行，输出<__main__.MyObject at 0x10efefc3a48>
 MyObject()  #第二次运行，输出<__main__.MyObject at 0x10efed0d108>
@@ -204,3 +205,78 @@ C:\work>python anothertestmodule.py
 所以代码*if **name** == '**main**':* 实现的功能就是**Make a script both importable and executable**，也就是说可以让模块既可以导入到别的模块中用，另外该模块自己也可执行。
 
 ### 3.HTTP请求流程
+
+### 4.关于Python中抽象类的一点思考
+
+#### 1.抽象类的作用
+
+> 在不同的模块中通过抽象基类来调用，可以用最精简的方式展示出代码之间的逻辑关系，让模块之间的依赖清晰简单。
+>
+> 抽象类的编程，让每个人可以关注当前抽象类的方法和描述，而不需要考虑过多的实现细节，这对协同开发有很大意义，也让代码可读性更高。
+
+如果我们定义一个抽象基类File
+
+```python
+import abc  # 利用abc模块实现抽象类
+
+class File(metaclass=abc.ABCMeta):  # abc.ABCMeta是实现抽象类的一个基础类
+    @abc.abstractmethod  # 定义抽象方法，无需实现功能
+    def read(self):
+        pass
+```
+
+- 该抽象基类有一个抽象方法`read`。
+
+- 再定义其他子类的时候就必须重写`read`方法，但是不同的子类的read的方法的功能是不一样的，但我们无须关心这具体的实现方法。
+
+- ```python
+  class Txt(File):  # 子类继承抽象类，但是必须定义read方法将抽象类中的read方法覆盖
+      def read(self):
+          print('文本数据的读取方法')
+  ```
+
+- 如果我们不写这个抽象类，那么每个编程人员写出子类的实现**上述read方法**功能的**方法名字**都不一样，使得代码之间的逻辑关系混乱，代码的可读性降低。
+
+- 从抽象基类继承出的子类，必须重写read，每个编程人员都得遵守。
+
+- **从而提高了代码间的逻辑关系提高了代码的可读性。**
+
+### 5.关于Python中类的self的一点思考
+
+#### 1.属性（变量）
+
+1.如果变量定义在类下面而不是类的方法下面，那这个变量既是类的属性也是类实例的属性  
+
+无论是类还是实例 都可以 调用它
+
+```python
+class Test(object):
+	a = 1
+	b = 2
+test1 = Test()
+Test.a 
+//1
+test.a
+//1
+```
+
+2.如果变量定义在类的方法下面，如果加了self，那这个变量就是类实例的属性，不是类的属性；如果没有加self，这个变量只是这个方法的局部变量，既不是类的属性也不是类实例的属性。
+
+```python
+class Test(object):
+	def __init__(self):
+        self.a = 1
+        b = 2
+test1 = Test()
+test1.a 
+//1
+Test.a
+//报错
+test1.b
+//报错
+Test.b
+//报错
+```
+
+#### 2.方法（函数）
+
