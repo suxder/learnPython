@@ -111,3 +111,96 @@ obj  #第三次运行，输出<__main__.MyObject at 0x10efed09248>
 > MyObject是class，加个括号MyObject()表示创建并返回实例
 
 **总结：在没有变量引用MyObject()的情况下，MyObject()只是存在临时地址上，所以后续的操作（赋值等）其实都没有用，不是对MyObject()的操作。相反，引用到变量后，变量x才可以影响实例。**
+
+## Day4
+
+### 1.实例属性和类属性
+
+> 我们既可以给实例绑定属性，也可以给类绑定一个属性，当给类绑定属性后，有该类生成的所有实例都可以访问该类的属性。
+
+**但要特别注意，禁止将类的属性名与实例的属性名设置为相同的。因为实例的优先级更高，实例的属性会屏蔽掉类的属性，在删除掉实例的属性后，访问实例的属性其实返回的是类的属性。**
+
+### 2.关于 if \__name\__ == '\__main\__ ':
+
+先编写一个测试模块*atestmodule.py*
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+' a test module '
+
+def addFunc(a,b):  
+    return a+b  
+
+print('atestmodule计算结果:',addFunc(1,1))
+```
+
+再编写一个模块*anothertestmodule.py*来调用上面的模块：
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+' a test module '
+
+import atestmodule
+
+print('调用anothermodule模块执行的结果是：',atestmodule.addFunc(12,23))
+```
+
+在刚才两个模块的路径（我的路径为：*“C:\work”*）中打开cmd，用命令行运行*atestmodule.py*：
+
+```
+C:\work>python atestmodule.py
+atestmodule计算结果: 2
+```
+
+在刚才两个模块的路径中打开，用命令行运行*anothertestmodule.py*：
+
+```
+C:\work>python anothertestmodule.py
+atestmodule计算结果: 2
+调用test模块执行的结果是： 35
+
+#显然，当我运行anothertestmodule.py后第一句并不是调用者所需要的，为了解决这一问题，Python提供了一个系统变量：__name__
+
+#注：name两边各有2个下划线__name__有2个取值：当模块是被调用执行的，取值为模块的名字；当模块是直接执行的，则该变量取值为：__main__
+```
+
+于是乎，被调用模块的测试代码就可以写在if语句里了，如下：
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+' a test module '
+
+def addFunc(a,b):  
+    return a+b  
+
+if __name__ == '__main__':  
+    print('atestmodule计算结果:',addFunc(1,1))
+```
+
+当再次运行*atestmodule.py*：
+
+```
+C:\work>python atestmodule.py
+atestmodule计算结果: 2
+
+#结果并没有改变，因为调用atestmodule.py时，__name__取值为__main__，if判断为真，所以就输出上面的结果
+```
+
+当再次运行*atestmodule.py*：
+
+```
+C:\work>python anothertestmodule.py
+调用test模块执行的结果是： 35
+
+#此时我们就得到了预期结果，不输出多余的结果。能实现这一点的主要原因在于当调用一个module时，此时的__name__取值为模块的名字，所以if判断为假，不执行后续代码。
+```
+
+所以代码*if **name** == '**main**':* 实现的功能就是**Make a script both importable and executable**，也就是说可以让模块既可以导入到别的模块中用，另外该模块自己也可执行。
+
+### 3.HTTP请求流程
