@@ -280,3 +280,49 @@ Test.b
 
 #### 2.方法（函数）
 
+## 一、列表与字符串之间的相互转换
+
+### 1.列表转字符串
+
+> ‘分割符’.join(列表)
+
+```python
+#eg:  
+lst = ['love','you']
+b = ' '.join(lst) #分割符为' '(空格)
+print(b)
+#结果为:love you
+```
+
+Tip: 列表转字符串是无法强制类型转换的，即：
+
+```python
+# -*- coding: utf-8 -*-
+list1 = ['I','love','you']
+str1 = str(list1)
+print(str1)
+#结果为：['I', 'love', 'you']
+```
+
+### 2.字符串转换为列表
+
+> 字符串名.split()
+
+```python
+# eg:
+b = 'love you'
+lst = b.split(' ')
+print(lst)
+# 结果为:['love','you']
+```
+
+Tip：字符串是可以强制转换为列表的：
+
+```python
+# eg:
+b = 'love you'
+list1 = list(b)
+print(list1)
+# 结果为:['l', 'o', 'v', 'e', ' ', 'y', 'o', 'u']
+```
+
